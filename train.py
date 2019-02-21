@@ -2,7 +2,6 @@ import argparse
 import torch
 import torch.nn as nn
 import os
-from models.testmodel import TestModel2 as TestModel
 from models.bulid_model import create_model
 from utils.MyDataset import MyDataset ,MyDataset1
 import time
