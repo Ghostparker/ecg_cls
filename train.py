@@ -18,7 +18,7 @@ def train():
 
     trainset_root = '/train/results/ecg_cls/'
     train_images_set = (('list_index','all_list.txt'),('list_index','new_list.txt'))
-    num_epoch = 44
+    num_epoch = 440
     batch_size = 10
     is_pretrained = True
     load_model_path = './weight/f1.pth'
@@ -26,7 +26,7 @@ def train():
     use_gpu = True
     gpu_id = 0
     iteration = 0 
-    max_iter, save_iter ,log_iter = 400  ,100, 20
+    max_iter, save_iter ,log_iter = 4000  ,100, 100
     device = 'cuda:{}'.format(gpu_id) if use_gpu else 'cpu'
     #device = 'cuda:1'
     
@@ -72,6 +72,7 @@ def train():
                 save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))
             iteration += 1
             if(iteration >= max_iter):
+                save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))
                 raise SystemExit('train is done')
     t2= time.time()
     print(t2-t1)

@@ -17,10 +17,10 @@ def train():
     '''parameters which will be optimized  '''
 
     trainset_root = '/train/results/ecg_cls/'
-    train_images_set = (('list_index','all_list.txt'),('list_index','new_list.txt'))
+    train_images_set = (('list_index','all_list.txt'),)
     batch_size = 10
     is_pretrained = True
-    load_model_path = './weight/model_300.pth'
+    load_model_path = './weight/model_3900.pth'
     save_path = './results/'
     use_gpu = True
     gpu_id = 0
@@ -39,7 +39,7 @@ def train():
     train_list_path = './all_list.txt'
     #train_set = MyDataset(train_list_path)
     train_set = MyDataset2(trainset_root,train_images_set)
-    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = batch_size , shuffle = True)
+    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = batch_size , shuffle = False)
 
 
     model = model.to(device)
@@ -59,11 +59,12 @@ def train():
 
 
 def save_record(spath ,fpath , groundtruth , confs):
+    _ , predict = torch.max(confs.data,1)
     fp = open(spath , 'a')
     for idx , path in enumerate(fpath):
-        fp.write('{} {} '.format(path,groundtruth[idx] ))
+        fp.write('{} {} {}'.format(path,groundtruth[idx] ,predict[idx].data))
         for conf in confs[idx]:
-            fp.write(' {:.4f}'.format(conf))
+            fp.write(' {:.4f}'.format(conf.data.cpu().numpy()))
         fp.write('\n')
     fp.close()
 if __name__ == '__main__':
