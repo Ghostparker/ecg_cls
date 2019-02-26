@@ -10,7 +10,7 @@ from shutil import copyfile
 
 
 def train():
-    model_name = 'TestModel'
+    model_name = 'TestModel2'
 
     '''cfg load'''
 
@@ -19,13 +19,14 @@ def train():
     trainset_root = '/train/results/ecg_cls/'
     train_images_set = (('list_index','all_list.txt'),('list_index','new_list.txt'))
     num_epoch = 44
+    batch_size = 10
     is_pretrained = True
     load_model_path = './weight/f1.pth'
     save_model_dir = './weight'
     use_gpu = True
-    gpu_id = 1
+    gpu_id = 0
     iteration = 0 
-    max_iter, save_iter ,log_iter = 400  ,100,20
+    max_iter, save_iter ,log_iter = 400  ,100, 20
     device = 'cuda:{}'.format(gpu_id) if use_gpu else 'cpu'
     #device = 'cuda:1'
     
@@ -42,7 +43,7 @@ def train():
     train_list_path = './all_list.txt'
     #train_set = MyDataset(train_list_path)
     train_set = MyDataset1(trainset_root,train_images_set)
-    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = 10 , shuffle = True)
+    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = batch_size , shuffle = True)
 
 
     model = model.to(device)
