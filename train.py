@@ -6,7 +6,7 @@ from models.bulid_model import create_model
 from utils.MyDataset import MyDataset ,MyDataset1
 import time
 from shutil import copyfile
-
+from utils.config import cls_test 
 
 
 def train():
@@ -15,18 +15,17 @@ def train():
     '''cfg load'''
 
     '''parameters which will be optimized  '''
-
-    trainset_root = '/train/results/ecg_cls/'
-    train_images_set = (('list_index','all_list.txt'),('list_index','new_list.txt'))
+    trainset_root = '/train/results/candelete/t2/ecg_cls/'
+    train_images_set = (('index_dataset','trainlist.txt'),)
     num_epoch = 440
-    batch_size = 10
-    is_pretrained = True
+    batch_size = 128
+    is_pretrained = False
     load_model_path = './weight/f1.pth'
     save_model_dir = './weight'
     use_gpu = True
     gpu_id = 0
     iteration = 0 
-    max_iter, save_iter ,log_iter = 4000  ,100, 100
+    max_iter, save_iter ,log_iter = 40000  ,100, 10
     device = 'cuda:{}'.format(gpu_id) if use_gpu else 'cpu'
     #device = 'cuda:1'
     
