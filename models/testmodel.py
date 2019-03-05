@@ -40,14 +40,14 @@ class testModel(nn.Module):
     def forward(self,x ,mode = 'train' ):
         out = self.layer(x)
         out = out.view(out.size(0),-1)
-        outline = list()
+        outlist = list()
         for k ,v in enumerate(self.classifiers):
-            out = v(x)
+            outline = v(out)
             if(mode == 'eval'):
-                outline.append(self.softmax(out))
+                outlist.append(self.softmax(outline))
             else:
-                outline.append(out)
-        return outline
+                outlist.append(outline)
+        return outlist
         
 def  add_classifiers( in_channels  = 464, num_classes_list = [5,]):
     layers = []
@@ -55,8 +55,8 @@ def  add_classifiers( in_channels  = 464, num_classes_list = [5,]):
         layers +=[nn.Linear(in_channels , num_class)]
     return layers
 
-def TestModel1(num_classes = [5,]):
+def TestModel1(cfg = None):
     num = 29 * 16
-    classifiers = add_classifiers(num , num_classes)
+    classifiers = add_classifiers(num , cfg['num_classes'])
     return testModel(cfg = None , classifiers = classifiers)
 
