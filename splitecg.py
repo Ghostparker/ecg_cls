@@ -10,12 +10,12 @@ file_list = []
 data_dir = 'oridata/'
 
 handle_root = 'signaldata1/'
-if(os.path.exist('index_dataset/')):
+if(os.path.exists('index_dataset/')):
     pass
 else:
     os.mkdir('index_dataset/')
 
-if(os.path.exist('signaldata1/')):
+if(os.path.exists('signaldata1/')):
     pass
 else:
     os.mkdir('signaldata1/')
