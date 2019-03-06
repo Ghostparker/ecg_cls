@@ -45,18 +45,24 @@ def train():
         print('load pretrained end')
     else:
         print('train from beginning')
+
     ''' dataset load'''     
     train_list_path = './all_list.txt'
     #train_set = MyDataset(train_list_path)
     train_set = MyDataset1(cfg['trainset_root'],cfg['train_images_set'])
     train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = cfg['train_batch_size'] , shuffle = True)
-    print('load end')
+    print('trainloader end')
 
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters() , lr = 1e-3)
-    
+    now_lr = cfg['learningrate']
+    optimizer = torch.optim.SGD(model.parameters() , lr = now_lr)
+    if(cfg['lr_change'] == 'lr_steps'):
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer , step_size = cfg['step_size'] , gamma = cfg['gamma'])
+    elif(cfg['lr_change'] == 'cosine'):
+       scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,max_iter) 
     t1 = time.time()
+    
 
     for epoch in range(num_epoch):
         for idx , (images , labels) in enumerate(train_loader):
@@ -72,27 +78,33 @@ def train():
             loss.backward()
             optimizer.step()
             if(iteration == 0 or (iteration % log_iter == 0)):
-                print('iteration  {} loss {:.4f}'.format( iteration , loss.item()))
+                print('iteration {} lr {}  loss {:.4f}'.format( iteration , optimizer.param_groups[0]['lr'] ,loss.item()))
 
             if( iteration == 0 or ( iteration != 0 and iteration % save_iter == 0)):
-                save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))
+                save_checkpoint(model ,  save_model_dir , '{}-{}.pth'.format(cfg['base_model'],iteration))
             
             if( cfg['lr_change'] == 'lr_steps'):
-                pass
+                if(iteration in cfg['lr_steps']):
+                    #scheduler.step()
+                    print('i am uncle t')
+                    print('tsl')
+                    now_lr *= cfg['gamma']
+                    adjust_learning_rate(optimizer , now_lr)
             elif( cfg['lr_change'] == 'cosine'):
-                pass
+                scheduler.step()
             else:
                 pass
             iteration += 1
             if(iteration >= max_iter):
                 save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))
+                t2= time.time()
+                print(t2-t1)
                 raise SystemExit('train is done')
-    t2= time.time()
-    print(t2-t1)
 
 ''' adjust the learning in trianing '''
 def adjust_learning_rate(optimizer , lr):
-    pass
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
 
 '''save model '''
 def save_checkpoint(model , path , name):
