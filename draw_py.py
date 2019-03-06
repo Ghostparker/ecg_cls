@@ -5,7 +5,7 @@ import numpy as np
 import os
 num = 0
 
-root_path = '/train/results/candelete/t2/ecg_cls/'
+root_path = '/train/results/ecg_cls/'
 # compare_path = ['38attribute/resnet50_22w_16k','38attribute/resnet50_38w_16K','38attribute/resnet50_39.4w_16K','38attribute/resnet50_49.4w_16k']
 # compare_path = ['38attribute/resnet50_39.4w_16K','37attribute/resnet50_50w_16k','38attribute/resnet50_49.4w_16k']
 #compare_path = ['resnet50_22w_16k','resnet50_35w_16k','resnet50_45w_16k','resnet50_50w_16k']
@@ -13,6 +13,15 @@ root_path = '/train/results/candelete/t2/ecg_cls/'
 #compare_path = ['mixupresnet18_12w','resnet_18_40w','resnet50_50w']
 compare_path = ['results/',]
 save_path = 'PR/'
+
+
+if(os.path.exists(save_path)):
+    for path in os.listdir(save_path):
+        os.remove(os.path.join(save_path,path))
+        print('{} has been deleted'.format(path))
+else:
+    os.mkdir(save_path)
+    print('{} has been created'.format(save_path))
 name_person_attr = ['双肩背包','单肩包','行李箱','眼镜','帽子','口罩','上身_白',
                    '上身_灰','上身_黑','上身_绿','上身_蓝','上身_红','上身_紫',
                     '上身_黄','上身_粉','上身_橘','上身_棕','上身_彩','下身_白',
@@ -21,7 +30,7 @@ name_person_attr = ['双肩背包','单肩包','行李箱','眼镜','帽子','�
                     '上身_格子','上身_条纹','下身_短裤','下身_短裙','下身_长裤',
                     '性别','短袖']
 name_person_attr = ['phone','smoke']
-name_person_attr = ['cad','smoke']
+name_person_attr = ['cad',]
 count_classes = 1
 num_classes = [5,]
 

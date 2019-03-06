@@ -7,18 +7,21 @@ cls_test = {
     'train_images_set' : (('index_dataset','trainlist.txt'),),
     'testset_root' : '/train/results/ecg_cls/',
     'test_images_set' : (('index_dataset','testlist.txt'),),
+    'result_savepath' : './results/',
+    'error_savepath' : './errorfile/',
 
-    'train_batch_size' : 128,
-    'test_batch_size' : 128,
-    'lr_change' : 'cosine',
+
+    'train_batch_size' : 256,
+    'test_batch_size' : 256,
+    'lr_change' : 'lr_steps',
     'learningrate' : 1e-3,
-    'lr_steps' :(1000,2000,3000),
-    'gamma' : 0.1,
+    'lr_steps' :[2000,4000,6000],
+    'gamma' : 0.2,
 
     'start_iter' : 0,
-    'max_iter' : 4000,
-    'log_iter' : 10,
-    'save_iter' : 100,
+    'max_iter' : 8000,
+    'log_iter' : 100,
+    'save_iter' : 1000,
 
 
     'use_gpu' : True,
@@ -27,7 +30,7 @@ cls_test = {
 
     'is_pretrained' : False,
     'pretrained_path' : './weight/f1.pth',
-    'eval_model_path' : './weight/model_4000.pth',
+    'eval_model_path' : './usemodel/model_40000.pth',
     'base_model' : 'ResNet18',
     'save_model_dir' : './weight',
 }

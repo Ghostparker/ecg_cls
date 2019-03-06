@@ -10,6 +10,16 @@ file_list = []
 data_dir = 'oridata/'
 
 handle_root = 'signaldata1/'
+if(os.path.exist('index_dataset/')):
+    pass
+else:
+    os.mkdir('index_dataset/')
+
+if(os.path.exist('signaldata1/')):
+    pass
+else:
+    os.mkdir('signaldata1/')
+
 list_train_path = 'index_dataset/trainlist.txt'
 list_test_path = 'index_dataset/testlist.txt'
 fp1 = open(list_train_path ,'w')
