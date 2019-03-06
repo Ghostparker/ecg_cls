@@ -4,43 +4,43 @@ import torch.nn as nn
 import os
 from models.bulid_model import create_model
 from utils.MyDataset import MyDataset ,MyDataset2
+from utils.config import cls_test
 import time
+
 from shutil import copyfile
 
 
 
 def train():
-    model_name = 'TestModel2'
 
     '''cfg load'''
 
     '''parameters which will be optimized  '''
 
-    trainset_root = '/train/results/candelete/t2/ecg_cls/'
-    train_images_set = (('index_dataset','testlist.txt'),)
+    cfg = cls_test
     batch_size = 100
     is_pretrained = True
     load_model_path = './weight/model_40000.pth'
     save_path = './results/'
     error_path = './results/error.txt'
-    use_gpu = True
-    gpu_id = 0
-    device = 'cuda:{}'.format(gpu_id) if use_gpu else 'cpu'
+    device = 'cuda:{}'.format(cfg['gpu_id']) if  cfg['use_gpu'] else 'cpu'
     num_classes = [5,]
     #device = 'cuda:1'
     
     
     '''load the train model'''
-    model = create_model(model_name)
+    print('Model {}'.format(cfg['base_model']))
+    print(device)
+    model = create_model(cfg)
    
     ''' load pretrained model'''
-    model.load_state_dict(torch.load(load_model_path))
+    model.load_state_dict(torch.load(cfg['eval_model_path']))
         
     ''' dataset load'''     
-    train_list_path = './all_list.txt'
     #train_set = MyDataset(train_list_path)
-    train_set = MyDataset2(trainset_root,train_images_set)
-    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = batch_size , shuffle = False)
+    test_set = MyDataset2(cfg['testset_root'],cfg['test_images_set'])
+    train_loader = torch.utils.data.DataLoader(dataset = test_set , 
+                                        batch_size = cfg['test_batch_size'] , shuffle = False)
 
 
     model = model.to(device)

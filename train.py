@@ -3,10 +3,12 @@ import torch
 import torch.nn as nn
 import os
 from models.bulid_model import create_model
-from utils.MyDataset import MyDataset ,MyDataset1
+from utils.MyDataset import MyDataset ,MyDataset1,MyDataset2
+
 import time
+from utils.config import cls_test
 from shutil import copyfile
-from utils.config import cls_test 
+
 
 
 def train():
@@ -15,35 +17,40 @@ def train():
     '''cfg load'''
 
     '''parameters which will be optimized  '''
-    trainset_root = '/train/results/candelete/t2/ecg_cls/'
-    train_images_set = (('index_dataset','trainlist.txt'),)
-    num_epoch = 440
-    batch_size = 128
-    is_pretrained = False
+    cfg = cls_test
+    # trainset_root = 'D:/python program/ecg_cls-master/'
+    # train_images_set = (('index_dataset','trainlist.txt'),)
+
+    # batch_size = 100
+    # is_pretrained = False
     load_model_path = './weight/f1.pth'
     save_model_dir = './weight'
-    use_gpu = True
-    gpu_id = 0
+
+    gpu_id = cfg['gpu_id']
     iteration = 0 
-    max_iter, save_iter ,log_iter = 40000  ,100, 10
-    device = 'cuda:{}'.format(gpu_id) if use_gpu else 'cpu'
+    max_iter, save_iter ,log_iter = cfg['max_iter'],cfg['save_iter'],cfg['log_iter']
+    num_epoch = max_iter
+    device = 'cuda:{}'.format(cfg['gpu_id']) if cfg['use_gpu'] else 'cpu'
+    print(device)
     #device = 'cuda:1'
     
     
     '''load the train model'''
-    model = create_model(model_name)
+    print('Model {}'.format(cfg['base_model']))
+    model = create_model(cfg)
    
     ''' load pretrained model'''
-    if(is_pretrained):
+    if(cfg['is_pretrained']):
         model.load_state_dict(torch.load(load_model_path))
         print('load pretrained end')
-        
+    else:
+        print('train from beginning')
     ''' dataset load'''     
     train_list_path = './all_list.txt'
     #train_set = MyDataset(train_list_path)
-    train_set = MyDataset1(trainset_root,train_images_set)
-    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = batch_size , shuffle = True)
-
+    train_set = MyDataset1(cfg['trainset_root'],cfg['train_images_set'])
+    train_loader = torch.utils.data.DataLoader(dataset = train_set , batch_size = cfg['train_batch_size'] , shuffle = True)
+    print('load end')
 
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
@@ -69,6 +76,13 @@ def train():
 
             if( iteration == 0 or ( iteration != 0 and iteration % save_iter == 0)):
                 save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))
+            
+            if( cfg['lr_change'] == 'lr_steps'):
+                pass
+            elif( cfg['lr_change'] == 'cosine'):
+                pass
+            else:
+                pass
             iteration += 1
             if(iteration >= max_iter):
                 save_checkpoint(model ,  save_model_dir , 'model_{}.pth'.format(iteration))

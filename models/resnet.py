@@ -37,7 +37,7 @@ class ResNet(nn.Module):
         self.layer1 = self.make_layer(block , 16 ,layers[0],stride = 1)
         self.layer2 = self.make_layer(block , 32 ,layers[1],stride = 2)
         self.layer3 = self.make_layer(block , 128,layers[2],stride = 2)
-        #self.layer4 = self.make_layer(block , 256,layers[3],stride = 2)
+        self.layer4 = self.make_layer(block , 256,layers[3],stride = 2)
         self.fc = nn.Linear(256,num_classes)
         self.softmax = nn.Softmax(dim = -1)
 
@@ -59,12 +59,23 @@ class ResNet(nn.Module):
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
+        out = self.layer4(out)
         out = F.avg_pool1d(out,7)
         out = out.view(out.size(0),-1)
         out = self.fc(out)
         if(mode == 'eval'):
             out = self.softmax(out)
         return out
+
+def ResNet18(cfg = None):
+    return ResNet(ResidualBlock , [2,2,2,2])
+
+def test():
+    device = 'cuda:0'
+    model = ResNet18().to(device)
+    x = torch.randn([10,1,64]).to(device)
+    outputs = model(x)
+    print(outputs.size())
 
 
 
